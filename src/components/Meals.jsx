@@ -1,40 +1,43 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import MealItem from "./MealItem";
 import Error from "./Error";
+import { CartContext } from "../store/CartProvider";
 
 
 export default function Meals() {
-  const [availableMeals, setAvailablesMeals] = useState([]);
+  const [availableMeals, setAvailableMeals] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState();
 
-  async function fetchAvailableMeals() {
-    const response = await fetch('http://localhost:3000/meals');
-    const resData = await response.json();
-    
-    if (!response.ok) {
-      throw new Error('An error happens fetching the meals.');
-    }
-    console.log(resData)
-    return resData;
-  }
-  
+  const { onFetch } = useContext(CartContext);
+
   useEffect(() => {
     async function fetchMeals() {
       setIsFetching(true);
-      try{
-        const meals = await fetchAvailableMeals();
+      setError(null);
+
+      try {
+        const meals = await onFetch();
         console.log(meals)
-        setAvailablesMeals(meals);
-        setIsFetching(false);
-      }catch(error){
+
+
+        if (Array.isArray(meals)) {
+          console.log(meals)
+          setAvailableMeals(meals);
+        } else {
+          throw new Error('Fetched data is not an array');
+        }
+
+      } catch (error) {
         setError({
           message: error.message || 'Could not fetch meals please try again later.'
         })
       }
+
+      setIsFetching(false);
     }
     fetchMeals();
-  }, []);
+  }, [onFetch]);
 
   if (error) {
     return <Error
@@ -42,7 +45,7 @@ export default function Meals() {
       message={error.message}
 
     />
-  } 
+  }
 
   return (
     <div id="meals">
@@ -50,6 +53,7 @@ export default function Meals() {
       {!isFetching && availableMeals.map((meal) =>
         <MealItem
           key={meal.id}
+          id={meal.id}
           name={meal.name}
           price={meal.price}
           description={meal.description}
