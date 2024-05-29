@@ -59,7 +59,7 @@ export function CartProvider({ children }) {
   }, []);
 
   const ctxValue={
-    items: shoppingCart,
+    items: shoppingCart.items,
     addItem,
     onFetch,
   }
