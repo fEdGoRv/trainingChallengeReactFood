@@ -23,7 +23,7 @@ export function CartProvider({ children }) {
     return resData;
   }
 
-  
+
   async function addItem(id) {
     const meals = await onFetch();
     setShoppingCart((prevCartState) => {
@@ -50,7 +50,7 @@ export function CartProvider({ children }) {
           quantity: 1
         })
       }
-      return {...prevCartState, items:exitingItems};
+      return { ...prevCartState, items: exitingItems };
     });
   }
 
@@ -58,10 +58,20 @@ export function CartProvider({ children }) {
     onFetch();
   }, []);
 
-  const ctxValue={
+  const totalPrice = shoppingCart.items.reduce((acc, item) =>
+    acc + (item.price * item.quantity),
+    0);
+
+  const totalQuantity = shoppingCart.items.reduce((acc, item) =>
+    acc + item.quantity,
+    0);
+
+  const ctxValue = {
     items: shoppingCart.items,
     addItem,
     onFetch,
+    totalPrice,
+    totalQuantity
   }
 
   return (
