@@ -54,6 +54,30 @@ export function CartProvider({ children }) {
     });
   }
 
+  async function decrementItem(id) {
+    const meals = await onFetch();
+    setShoppingCart((prevCartState) => {
+      const existingItems = [...prevCartState.items];
+      const existingItemIndex = existingItems.findIndex((item) =>
+        item.id === id
+      );
+
+      const existingCartItem = existingItems[existingItemIndex];
+
+      if (existingCartItem.quantity > 1) {
+        const updatedItem = {
+          ...existingCartItem,
+          quantity: existingCartItem.quantity - 1,
+        }
+        existingItems[existingItemIndex] = updatedItem;
+      } else{
+        const updatedExistingItems = existingItems.filter((item)=>item.id !== id);
+        return {...prevCartState, items:updatedExistingItems}
+      }
+      return { ...prevCartState, items: existingItems };
+    });
+  }
+
   useEffect(() => {
     onFetch();
   }, []);
@@ -71,7 +95,8 @@ export function CartProvider({ children }) {
     addItem,
     onFetch,
     totalPrice,
-    totalQuantity
+    totalQuantity,
+    decrementItem
   }
 
   return (
