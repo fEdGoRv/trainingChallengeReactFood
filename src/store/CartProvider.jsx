@@ -85,6 +85,7 @@ export function CartProvider({ children }) {
   const totalPrice = shoppingCart.items.reduce((acc, item) =>
     acc + (item.price * item.quantity),
     0);
+  const formattedTotalPrice = `$${totalPrice.toFixed(2)}`;
 
   const totalQuantity = shoppingCart.items.reduce((acc, item) =>
     acc + item.quantity,
@@ -94,7 +95,7 @@ export function CartProvider({ children }) {
     items: shoppingCart.items,
     addItem,
     onFetch,
-    totalPrice,
+    formattedTotalPrice,
     totalQuantity,
     decrementItem
   }

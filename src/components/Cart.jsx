@@ -3,7 +3,7 @@ import { CartContext } from "../store/CartProvider"
 
 export default function () {
 
-    const { items, addItem, totalPrice, decrementItem } = useContext(CartContext);
+    const { items, addItem, formattedTotalPrice:totalPrice, decrementItem } = useContext(CartContext);
     if (!items) {
         return <p>Loading please wait...</p>
     }
