@@ -22,7 +22,6 @@ const CartModal = forwardRef(function modal(props, ref) {
 
     function handleCheckOut() {
         handleCloseDialog();
-        console.log('ref sending the request to open formModal')
         formDialog.current.open();
     }
 
