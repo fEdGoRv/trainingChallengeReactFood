@@ -4,7 +4,7 @@ import Cart from "./Cart";
 import FormModal from "./FormModal";
 
 const CartModal = forwardRef(function modal(props, ref) {
-    const [cartIsOpen, setCartIsOpen] = useState(true)
+
     const dialog = useRef();
     const formDialog = useRef();
 
@@ -16,38 +16,34 @@ const CartModal = forwardRef(function modal(props, ref) {
         }
     });
 
-    function handleCloseDialog(){
+    function handleCloseDialog() {
         dialog.current.close();
     }
 
-    function handleCheckOut(){
+    function handleCheckOut() {
         handleCloseDialog();
-        setCartIsOpen(false);
         console.log('ref sending the request to open formModal')
-        formDialog.current.open();   
+        formDialog.current.open();
     }
 
     return createPortal(
         <>
-            {
-                cartIsOpen ?
-                    <dialog ref={dialog} className="modal">
-                        < h3 > Your Cart</h3 >
-                        <Cart />
-                        <div className="modal-actions">
-                            <button onClick={handleCloseDialog}>Close</button>
-                            <button
-                                type="button"
-                                onClick={handleCheckOut}
-                                className="button"
-                            >
-                                Go to CheckOut
-                            </button>
-                        </div>
-                    </dialog >
-                    :
-                   <FormModal ref={formDialog}/>
-            }
+            <dialog ref={dialog} className="modal">
+                < h3 > Your Cart</h3 >
+                <Cart />
+                <div className="modal-actions">
+                    <button onClick={handleCloseDialog}>Close</button>
+                    <button
+                        type="button"
+                        onClick={handleCheckOut}
+                        className="button"
+                    >
+                        Go to CheckOut
+                    </button>
+                </div>
+            </dialog >
+
+            <FormModal ref={formDialog} />
         </>,
         document.getElementById('modal')
     );
