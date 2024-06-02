@@ -78,6 +78,12 @@ export function CartProvider({ children }) {
     });
   }
 
+  function clearCart(){
+    setShoppingCart({
+      items:[]
+    })
+  }
+
   useEffect(() => {
     onFetch();
   }, []);
@@ -97,7 +103,8 @@ export function CartProvider({ children }) {
     onFetch,
     formattedTotalPrice,
     totalQuantity,
-    decrementItem
+    decrementItem,
+    clearCart
   }
 
   return (

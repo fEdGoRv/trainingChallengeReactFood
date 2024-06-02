@@ -4,7 +4,8 @@ import { CartContext } from "../store/CartProvider";
 
 
 const FormModal = forwardRef(function form(props, ref) {
-    const {items} = useContext(CartContext);
+    const { formattedTotalPrice, items, clearCart } = useContext(CartContext);
+
     const formDailog = useRef();
     const nameRef = useRef();
     const emailRef = useRef();
@@ -13,83 +14,97 @@ const FormModal = forwardRef(function form(props, ref) {
     const cityRef = useRef();
     const [posttingData, setPosttingData] = useState({})
 
-    const {formattedTotalPrice} = useContext(CartContext);
+
 
     useImperativeHandle(ref, () => {
         return {
-            open:() => {
+            open: () => {
                 formDailog.current.showModal();
             }
-        }  
+        }
     })
 
-    function handleSubmitOrder(event, items){
-        event.preventDefualt();
+    function handleCloseDialog() {
+        formDailog.current.close();
+    }
+    function resetForm(){
+        nameRef.current.value="";
+        emailRef.current.value="";
+        streetRef.current.value="";
+        postalCodeRef.current.value="";
+        cityRef.current.value="";
+        clearCart();
+    }
+
+    function handleSubmitOrder(event) {
+        event.preventDefault();
         setPosttingData({
             name: nameRef.current.value,
             email: emailRef.current.value,
             streetref: streetRef.current.value,
             postalCode: postalCodeRef.current.value,
             city: cityRef.current.value,
-            items: items 
+            items: items
         });
+        handleCloseDialog();
+        resetForm();
         console.log('processing order');
-       console.log(posttingData);
+        console.log(posttingData);
     }
 
 
     return createPortal(
         <dialog ref={formDailog} className="modal">
-        <form onSubmit={()=>handleSubmitOrder(items)}>
-            <h2>Check Out</h2>
-            <p>Total Amount {`${formattedTotalPrice}`}</p>
-            <div className="control">
-                <label id="name">Full Name</label>
-                <input 
-                id="name" 
-                ref={nameRef}
-                required
-                />
-            </div>
-            <div className="control">
-                <label id="email">Email Adress</label>
-                <input 
-                id="email" 
-                ref={emailRef} 
-                required  
-                />
-            </div>
-            <div className="control">
-                <label id="street">Street</label>
-                <input 
-                id="street" 
-                ref={streetRef} 
-                required
-                />
-            </div>
-            <div className="control-row">
+            <form onSubmit={handleSubmitOrder}>
+                <h2>Check Out</h2>
+                <p>Total Amount {`${formattedTotalPrice}`}</p>
                 <div className="control">
-                    <label id="postal-code">Postal Code</label>
-                    <input 
-                    id="postal-code" 
-                    ref={postalCodeRef} 
-                    required 
+                    <label htmlFor="name">Full Name</label>
+                    <input
+                        id="name"
+                        ref={nameRef}
+                        required
                     />
                 </div>
                 <div className="control">
-                    <label id="city">City</label>
-                    <input 
-                    id="city" 
-                    ref={cityRef} 
-                    required 
+                    <label htmlFor="email">Email Adress</label>
+                    <input
+                        id="email"
+                        ref={emailRef}
+                        required
                     />
                 </div>
+                <div className="control">
+                    <label htmlFor="street">Street</label>
+                    <input
+                        id="street"
+                        ref={streetRef}
+                        required
+                    />
+                </div>
+                <div className="control-row">
+                    <div className="control">
+                        <label htmlFor="postal-code">Postal Code</label>
+                        <input
+                            id="postal-code"
+                            ref={postalCodeRef}
+                            required
+                        />
+                    </div>
+                    <div className="control">
+                        <label htmlFor="city">City</label>
+                        <input
+                            id="city"
+                            ref={cityRef}
+                            required
+                        />
+                    </div>
 
-            </div>
-            <div className="modal-actions">
-                <button onClick={() => formDailog.current.close()}>Close</button>
-                <button className="button" >Submit Order</button>
-            </div>
+                </div>
+                <div className="modal-actions">
+                    <button type="button" onClick={handleCloseDialog}>Close</button>
+                    <button>Submit Order</button>
+                </div>
             </form>
         </dialog>
         , document.getElementById('modal'));
