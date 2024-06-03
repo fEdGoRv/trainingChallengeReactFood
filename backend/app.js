@@ -21,6 +21,7 @@ app.get('/meals', async (req, res) => {
 });
 
 app.post('/orders', async (req, res) => {
+  console.log('Received order data:', req.body);
   const orderData = req.body.order;
 
   if (orderData === null || orderData.items === null || orderData.items.length === 0) {

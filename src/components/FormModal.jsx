@@ -12,9 +12,9 @@ const FormModal = forwardRef(function form(props, ref) {
     const streetRef = useRef();
     const postalCodeRef = useRef();
     const cityRef = useRef();
-    const [posttingData, setPosttingData] = useState({})
 
-
+    const [error, setError] = useState({});
+    const [loading, setLoading] = useState();
 
     useImperativeHandle(ref, () => {
         return {
@@ -36,24 +36,45 @@ const FormModal = forwardRef(function form(props, ref) {
         clearCart();
     }
 
-    function handleSubmitOrder(event) {
+    async function handleSubmitOrder(event) {
         event.preventDefault();
-        setPosttingData({
+        setLoading(true);
+       const data = {
+        customer:{
             name: nameRef.current.value,
             email: emailRef.current.value,
-            streetref: streetRef.current.value,
-            postalCode: postalCodeRef.current.value,
-            city: cityRef.current.value,
-            items: items
-        });
-        handleCloseDialog();
-        resetForm();
-        console.log('processing order');
-        console.log(posttingData);
+            street: streetRef.current.value,
+            "postal-code": postalCodeRef.current.value,
+            city: cityRef.current.value
+       },
+       items: items
+        };
+        console.log(data);
+        try{
+            const response = await fetch('http://localhost:3000/orders',{
+                method: 'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({order:data}),
+            });
+            if(!response.ok){
+                throw new Error('Failed to submit your order, please try agian later.')
+            }
+            handleCloseDialog();
+            resetForm();
+            console.log('Order submitted successfully!')
+        }catch(error){
+            setError(error.message)
+        }finally{
+            setLoading(false);
+        }     
     }
-
-
+    
     return createPortal(
+        <>
+        {loading && <p>Your order is beening processed</p>}
+        {error && <p style={{color: 'red'}}>{error.message}</p>}
         <dialog ref={formDailog} className="modal">
             <form onSubmit={handleSubmitOrder}>
                 <h2>Check Out</h2>
@@ -107,6 +128,7 @@ const FormModal = forwardRef(function form(props, ref) {
                 </div>
             </form>
         </dialog>
+        </>
         , document.getElementById('modal'));
 });
 
